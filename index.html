@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Assistant & Music Player</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a2e;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #2e2e42;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            margin: 20px;
+        }
+
+        button {
+            background-color: #ff8c00;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e07b00;
+        }
+
+        #status {
+            margin-top: 15px;
+            font-size: 16px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Hi, I'm <span style="color: #ff5722;">HONEY</span>!</h1>
+        <p>Your Virtual Assistant & Music Player</p>
+        <button id="speak-btn">
+            Speak <i class="fas fa-microphone icon"></i>
+        </button>
+        <p id="status">Click the button and say a command or a song name.</p>
+    </div>
+
+    <script>
+        const speakBtn = document.getElementById("speak-btn");
+        const status = document.getElementById("status");
+        const speechRecognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        const synth = window.speechSynthesis;
+
+        speakBtn.addEventListener("click", () => {
+            speechRecognition.start();
+            status.textContent = "Listening...";
+        });
+
+        speechRecognition.onresult = (event) => {
+            const userInput = event.results[0][0].transcript.toLowerCase();
+            status.textContent = `You said: "${userInput}"`;
+            handleCommand(userInput);
+        };
+
+        function handleCommand(input) {
+            if (input.includes("play") || input.includes("song") || input.includes("music")) {
+                searchMusic(input);
+            } else {
+                handleAssistantCommand(input);
+            }
+        }
+
+        function handleAssistantCommand(command) {
+            if (command.includes("hello")) {
+                speak("Hello! How can I assist you?");
+            } else if (command.includes("creator")) {
+                speak("My creator is Harshada.");
+            } else if (command.includes("who")) {
+                speak("Hi, I'm HONEY! Your Virtual Assistant & Music Player.");
+            } else if (command.includes("open youtube")) {
+                openLink("https://www.youtube.com", "Opening YouTube.");
+            } else if (command.includes("open google")) {
+                 openLink("https://www.google.co.in", "Opening Google.");
+            } else if (command.includes("open whatsapp")) {
+                openLink("https://web.whatsapp.com", "Opening WhatsApp.");
+            } else if (command.includes("open instagram")) {
+                openLink("https://www.instagram.com", "Opening Instagram.");
+            } else if (command.includes("open chrome")) {
+                openLink("https://www.google.com/intl/en/chrome/", "Opening Chrome.");
+            } else if (command.includes("open chatgpt")) {
+                openLink("https://chat.openai.com", "Opening ChatGPT.");
+            } else {
+                speak("I'm sorry, I didn't understand that.");
+            }
+        }
+
+        function searchMusic(song) {
+            const searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(song)}`;
+            openLink(searchUrl, `Searching for "${song}" on YouTube.`);
+        }
+
+        function openLink(url, message) {
+            window.open(url, "_blank");
+            speak(message);
+        }
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            synth.speak(utterance);
+        }
+    </script>
+</body>
+
+</html>
